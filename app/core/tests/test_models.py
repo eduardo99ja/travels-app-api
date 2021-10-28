@@ -1,5 +1,12 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from datetime import datetime
+from core import models
+
+
+def sample_user(email='test@gmail.com', password='testpass'):
+    """Create a sample user"""
+    return get_user_model().objects.create_user(email, password)
 
 
 class ModelTests(TestCase):
@@ -36,3 +43,18 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    def test_travel_str(self):
+        """Test the travel string representation"""
+        travel = models.Travel.objects.create(
+            user=sample_user(),
+            title='Cancun',
+            description='Visita Cancun',
+            days=5,
+            price=1500,
+            category='Tour',
+            location='Yucatan',
+            departure_date=datetime.today(),
+            countInStock=25
+        )
+        self.assertEqual(str(travel), travel.title)
