@@ -2,11 +2,19 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from datetime import datetime
 from core import models
+from core.models import Category
 
 
 def sample_user(email='test@gmail.com', password='testpass'):
     """Create a sample user"""
     return get_user_model().objects.create_user(email, password)
+
+
+def sample_category():
+    """Create and return a sample tag"""
+    return Category.objects.create(category_name="Viaje en solitario",
+                                   slug="viaje-en-solitario",
+                                   description="Descubre la mejor manera de viajar")
 
 
 class ModelTests(TestCase):
@@ -44,15 +52,26 @@ class ModelTests(TestCase):
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
 
+    def test_category_str(self):
+        """Test the travel string representation"""
+
+        category = models.Category.objects.create(
+            category_name="Viaje en solitario",
+            slug="viaje-en-solitario",
+            description="Descubre la mejor manera de viajar",
+        )
+        self.assertEqual(str(category), category.slug)
+
     def test_travel_str(self):
         """Test the travel string representation"""
+        category = sample_category()
         travel = models.Travel.objects.create(
             user=sample_user(),
             title='Cancun',
             description='Visita Cancun',
             days=5,
             price=1500,
-            category='Tour',
+            category=category,
             location='Yucatan',
             departure_date=datetime.today(),
             countInStock=25
