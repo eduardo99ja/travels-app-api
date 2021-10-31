@@ -7,12 +7,12 @@ from rest_framework import status
 from travels_app.serializers import CategorySerializer
 
 from core.models import Travel, Category
-from travels_app.serializers import TravelSerializer
+from travels_app.serializers import TravelSerializer, TravelCategorySerializer
 
 
 class TravelList(generics.ListAPIView):
     """List all travels"""
-    serializer_class = TravelSerializer
+    serializer_class = TravelCategorySerializer
     queryset = Travel.objects.all()
 
 
@@ -43,8 +43,7 @@ class CategoryDetailAV(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CategorySerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-    
-    
+
 
 class CategoryCreateAV(generics.CreateAPIView):
     """Create new category object"""
@@ -55,7 +54,7 @@ class CategoryCreateAV(generics.CreateAPIView):
         serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            data = {"success":"ok","data": serializer.data}
+            data = {"success": "ok", "data": serializer.data}
             return Response(data, status=status.HTTP_201_CREATED)
         else:
             return Response({"error": serializer.errors},
