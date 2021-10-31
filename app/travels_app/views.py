@@ -27,4 +27,4 @@ class TravelCreateAV(APIView):
             return Response(data, status=status.HTTP_201_CREATED)
         else:
             return Response({"error": serializer.errors},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                            status=status.HTTP_400_BAD_REQUEST)

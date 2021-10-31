@@ -13,6 +13,14 @@ def travel_image_file_path(instance, filename):
     return os.path.join('uploads/travels/', filename)
 
 
+def category_image_file_path(instance, filename):
+    """Generate file path for new travel image"""
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+
+    return os.path.join('uploads/categories/', filename)
+
+
 class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
@@ -47,15 +55,26 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
 
+class Category(models.Model):
+    category_name = models.CharField(unique=True, max_length=50)
+    slug = models.SlugField(unique=True, max_length=100)
+    description = models.TextField(max_length=255, blank=True)
+    cat_image = models.ImageField(
+        null=True, upload_to=category_image_file_path)
+    
+    def __str__(self):
+        return self.slug
+
+
 class Travel(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     image = models.ImageField(
         null=True, upload_to=travel_image_file_path)
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=50, unique=True)
     description = models.TextField()
     days = models.IntegerField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
-    category = models.CharField(max_length=200, null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     location = models.CharField(max_length=100)
     departure_date = models.DateField()
     countInStock = models.IntegerField()
