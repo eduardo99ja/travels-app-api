@@ -17,7 +17,7 @@ class TravelList(generics.ListAPIView):
 
 
 class TravelCreateAV(APIView):
-    authentication_classes = (TokenAuthentication,)
+    #authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
